@@ -1,0 +1,42 @@
+﻿<Page
+    x:Class="Sensorkit.RunPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Sensorkit"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+
+        Loaded="OnPageLoaded">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid Background="LightBlue" Grid.Row="0">
+            <Button Style="{ThemeResource NavigationBackButtonNormalStyle}" Name="btn_back" Click="btn_back_Click" Height="50"/>
+        </Grid>
+        <Grid Grid.Row="2">
+            <ScrollViewer>
+                <StackPanel Orientation="Vertical">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Margin="10 10 5 10" FontSize="20" Name="txt_headLine"></TextBlock>
+                        <TextBlock Margin="0 10 0 10" FontSize="20" Text="{Binding SelectedIndex}"></TextBlock>
+                        <TextBlock Margin="0 10 5 10" FontSize="20" Text=":"></TextBlock>
+                        <TextBlock Margin="0 10 10 10" FontSize="20" Text="{Binding LessonName}"></TextBlock>
+                    </StackPanel>
+                    <TextBlock Margin="10" FontWeight="SemiBold" Name="txt_input"></TextBlock>
+                    <Grid Name="Input">
+                    </Grid>
+                    <!--<Button Content="&#xE830;" Style="{ThemeResource PlayButton}" Click="Button_Click"/>-->
+                    <Button Margin="10" Name="btn_run" Click="btn_run_Click">
+                        <SymbolIcon Height="20" Width="50" Symbol="Play" Name="StartStopButton"></SymbolIcon>
+                    </Button>
+                    <TextBlock Margin="10" FontWeight="SemiBold" Name="txt_output"></TextBlock>
+                    <StackPanel Orientation="Vertical" Name="Output" Margin="20">
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</Page>

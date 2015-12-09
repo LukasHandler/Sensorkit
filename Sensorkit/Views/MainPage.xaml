@@ -1,0 +1,72 @@
+﻿<Page
+    x:Class="Sensorkit.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Sensorkit"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Loaded="OnWindowLoaded">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="wideState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="641" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="tb_navigationToggle.IsChecked" Value="true" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="narrowState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="splitview.DisplayMode" Value="Overlay" />
+                        <Setter Target="navigationButton.IsChecked" Value="false" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid Background="LightBlue" Grid.Row="0">
+            <ToggleButton Name="tb_navigationToggle" Background="Transparent" Margin="0" IsChecked="False">
+                <Image Source="../Assets/hamburger.png" HorizontalAlignment="Left" Margin="5" Height="30"></Image>
+            </ToggleButton>
+            <Button Name="btn_play" Background="Transparent" Margin="0" HorizontalAlignment="Right" Click="btn_play_Click">
+                <SymbolIcon Symbol="Play" Margin="0" Height="40"></SymbolIcon>
+            </Button>
+        </Grid>
+        <Grid Grid.Row="2">
+            <SplitView DisplayMode="Inline" OpenPaneLength="200" IsEnabled="True" IsPaneOpen="{Binding IsChecked, ElementName=tb_navigationToggle, Mode=TwoWay}" Name="splitview" Margin="0">
+                <SplitView.Pane>
+                    <!-- Optional Color 2982CC -->
+                    <ListView SelectionChanged="lv_navigation_SelectionChanged" IsItemClickEnabled="True" ItemClick="lv_navigation_ItemClick" Name="lv_navigation" ItemsSource="{Binding Path=Lessons}" ScrollViewer.VerticalScrollBarVisibility="Hidden" Background="#29B0CC" Width="300">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="{Binding Path=Id}" Margin="0 0 10 0" Foreground="White" />
+                                    <TextBlock Grid.Column="1" Text="{Binding Path=Name}" Foreground="White" />
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </SplitView.Pane>
+                <ScrollViewer Grid.Column="1">
+                    <Grid Margin="10" Name="content">
+                    </Grid>
+                </ScrollViewer>
+            </SplitView>
+        </Grid>
+    </Grid>
+</Page>
