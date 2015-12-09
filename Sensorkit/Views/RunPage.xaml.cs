@@ -42,7 +42,6 @@ namespace Sensorkit
 
         public RunPage()
         {
-            int x = 0;
             viewModelRun = new VmRun();
             resources = ResourceLoader.GetForCurrentView("RunView");
 
