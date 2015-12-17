@@ -108,13 +108,13 @@ namespace Sensorkit.ViewModel
 
             if (!lesson.RunAble)
             {
-                errorMessage += resources.GetString("LessonRunAble") + "\n";
-                return errorMessage;
+                errorMessage += resources.GetString("LessonRunAble") + Environment.NewLine;
+                return "Error" + Environment.NewLine + errorMessage;
             }
 
             if (!this.IsRaspConnected())
             {
-                errorMessage += resources.GetString("LessonRasp") + "\n";
+                errorMessage += resources.GetString("LessonRasp") + Environment.NewLine;
             }
 
             var path = "Sensorkit.LessonClasses.Lesson";
@@ -124,20 +124,20 @@ namespace Sensorkit.ViewModel
 
             if (lessonType == null)
             {
-                errorMessage += resources.GetString("LessonClass") + path + currentLesson + "\n";
+                errorMessage += resources.GetString("LessonClass") + path + currentLesson + Environment.NewLine;
             }
             else
             {
                 if (!lessonType.GetTypeInfo().IsSubclassOf(typeof(Lesson)))
                 {
-                    errorMessage += string.Format(resources.GetString("LessonChild"), path, currentLesson) + "\n";
+                    errorMessage += string.Format(resources.GetString("LessonChild"), path, currentLesson) + Environment.NewLine;
                 }
 
                 MethodInfo lessonMethod = lessonType.GetMethod("Start");
 
                 if (lessonMethod == null)
                 {
-                    errorMessage += resources.GetString("LessonStart") + path + currentLesson + "\n";
+                    errorMessage += resources.GetString("LessonStart") + path + currentLesson + Environment.NewLine;
                 }
                 else
                 {
@@ -145,12 +145,12 @@ namespace Sensorkit.ViewModel
 
                     if (attributes.Count() == 0)
                     {
-                        errorMessage += resources.GetString("LessonArg") + "\n";
+                        errorMessage += resources.GetString("LessonArg") + Environment.NewLine;
                     }
 
                     if (!attributes[0].ParameterType.Equals(typeof(StackPanel)))
                     {
-                        errorMessage += resources.GetString("Lesson1Arg") + "\n";
+                        errorMessage += resources.GetString("Lesson1Arg") + Environment.NewLine;
                     }
                 }
 
@@ -158,7 +158,7 @@ namespace Sensorkit.ViewModel
 
                 if (lessonMethod == null)
                 {
-                    errorMessage += resources.GetString("LessonStop") + path + currentLesson + "\n";
+                    errorMessage += resources.GetString("LessonStop") + path + currentLesson + Environment.NewLine;
                 }
             }
 
@@ -168,7 +168,7 @@ namespace Sensorkit.ViewModel
             }
             else
             {
-                return "Error\n" + errorMessage;
+                return "Error" + Environment.NewLine + errorMessage;
             }
         }
     }

@@ -13,6 +13,8 @@
     using LessonClasses;
     using System.Linq;
     using Windows.ApplicationModel.Resources;
+    using Windows.UI.Xaml.Media;
+    using Windows.UI;
 
     /// <summary>
     /// Page where you can click through the tutorial or start an exercise when the device it's running on is the raspberry pi b+.
@@ -40,6 +42,7 @@
             modelViewMain.CreateLessons();
 
             DataContext = modelViewMain;
+
             this.InitializeComponent();
         }
 
@@ -48,16 +51,26 @@
         /// </summary>
         private void lv_navigation_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            content.Children.Clear();
-            content.RowDefinitions.Clear();
+            grid_content.Children.Clear();
+            grid_content.RowDefinitions.Clear();
 
             var listview = sender as ListView;
             var selectedLesson = ((LessonModel)listview.SelectedItem);
 
-            // Headline
-            content.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
             int currentRow = 0;
 
+            // Empty Error Text
+            grid_content.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
+            TextBlock errorText = new TextBlock();
+            errorText.Margin = new Thickness(5);
+            errorText.FontSize = 20;
+            errorText.SetValue(Grid.RowProperty, currentRow);
+            errorText.Visibility = Visibility.Collapsed;
+            grid_content.Children.Add(errorText);
+            currentRow++;
+
+            // Headline
+            grid_content.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
             TextBlock header = new TextBlock();
             header.Margin = new Thickness(5);
             header.SetValue(Grid.RowProperty, currentRow);
@@ -65,13 +78,13 @@
             header.FontSize = 30;
             header.HorizontalAlignment = HorizontalAlignment.Center;
             header.TextWrapping = TextWrapping.Wrap;
-            content.Children.Add(header);
+            grid_content.Children.Add(header);
 
             var parts = selectedLesson.Content.Split('#');
 
             foreach (var item in parts)
             {
-                content.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
+                grid_content.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
                 currentRow++;
 
                 // Image
@@ -93,7 +106,7 @@
 
                     img.Source = bitmapImage;
 
-                    content.Children.Add(img);
+                    grid_content.Children.Add(img);
                 }
                 // Text
                 else
@@ -113,7 +126,7 @@
                     }
 
                     text.TextWrapping = TextWrapping.Wrap;
-                    content.Children.Add(text);
+                    grid_content.Children.Add(text);
                 }
             }
         }
@@ -173,9 +186,20 @@
             }
             else
             {
-                var dialog = new MessageDialog(errorMessage);
-                await dialog.ShowAsync();
-                return;
+                if (modelViewMain.IsRaspConnected())
+                {
+                    scrollViewer.ChangeView(0, 0, null);
+                    TextBlock errorText = ((TextBlock)grid_content.Children[0]);
+                    errorText.Text = errorMessage;
+                    errorText.Visibility = Visibility.Visible;
+                    errorText.TextWrapping = TextWrapping.Wrap;
+                }
+                else
+                {
+                    var dialog = new MessageDialog(errorMessage);
+                    await dialog.ShowAsync();
+                    return;
+                }
             }
         }
 

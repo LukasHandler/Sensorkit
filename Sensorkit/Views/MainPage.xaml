@@ -24,8 +24,8 @@
                         <AdaptiveTrigger MinWindowWidth="0" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="splitview.DisplayMode" Value="Overlay" />
-                        <Setter Target="navigationButton.IsChecked" Value="false" />
+                        <Setter Target="sv_splitview.DisplayMode" Value="Overlay" />
+                        <Setter Target="tb_navigationToggle.IsChecked" Value="false" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -35,8 +35,8 @@
             <RowDefinition Height="50"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Grid Background="LightBlue" Grid.Row="0">
-            <ToggleButton Name="tb_navigationToggle" Background="Transparent" Margin="0" IsChecked="False">
+        <Grid Background="#1EA7CC" Grid.Row="0">
+            <ToggleButton Name="tb_navigationToggle" Background="Transparent" Margin="0" IsChecked="False" >
                 <Image Source="../Assets/hamburger.png" HorizontalAlignment="Left" Margin="5" Height="30"></Image>
             </ToggleButton>
             <Button Name="btn_play" Background="Transparent" Margin="0" HorizontalAlignment="Right" Click="btn_play_Click">
@@ -44,10 +44,10 @@
             </Button>
         </Grid>
         <Grid Grid.Row="2">
-            <SplitView DisplayMode="Inline" OpenPaneLength="200" IsEnabled="True" IsPaneOpen="{Binding IsChecked, ElementName=tb_navigationToggle, Mode=TwoWay}" Name="splitview" Margin="0">
+            <SplitView DisplayMode="Inline" OpenPaneLength="200" IsEnabled="True" IsPaneOpen="{Binding IsChecked, ElementName=tb_navigationToggle, Mode=TwoWay}" Name="sv_splitview" Margin="0">
                 <SplitView.Pane>
                     <!-- Optional Color 2982CC -->
-                    <ListView SelectionChanged="lv_navigation_SelectionChanged" IsItemClickEnabled="True" ItemClick="lv_navigation_ItemClick" Name="lv_navigation" ItemsSource="{Binding Path=Lessons}" ScrollViewer.VerticalScrollBarVisibility="Hidden" Background="#29B0CC" Width="300">
+                    <ListView SelectionChanged="lv_navigation_SelectionChanged" IsItemClickEnabled="True" ItemClick="lv_navigation_ItemClick" Name="lv_navigation" ItemsSource="{Binding Path=Lessons}" ScrollViewer.VerticalScrollBarVisibility="Hidden" Background="#13697F" Width="300">
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <Grid>
@@ -62,8 +62,8 @@
                         </ListView.ItemTemplate>
                     </ListView>
                 </SplitView.Pane>
-                <ScrollViewer Grid.Column="1">
-                    <Grid Margin="10" Name="content">
+                <ScrollViewer Grid.Column="1" Name="scrollViewer">
+                    <Grid Margin="10" Name="grid_content">
                     </Grid>
                 </ScrollViewer>
             </SplitView>
