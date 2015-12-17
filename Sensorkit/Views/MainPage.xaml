@@ -39,7 +39,7 @@
             <ToggleButton Name="tb_navigationToggle" Background="Transparent" Margin="0" IsChecked="False" >
                 <Image Source="../Assets/hamburger.png" HorizontalAlignment="Left" Margin="5" Height="30"></Image>
             </ToggleButton>
-            <Button Name="btn_play" Background="Transparent" Margin="0" HorizontalAlignment="Right" Click="btn_play_Click">
+            <Button Name="btn_play" Background="Transparent" Margin="0" HorizontalAlignment="Right" Click="Btn_play_Click">
                 <SymbolIcon Symbol="Play" Margin="0" Height="40"></SymbolIcon>
             </Button>
         </Grid>
@@ -47,7 +47,7 @@
             <SplitView DisplayMode="Inline" OpenPaneLength="200" IsEnabled="True" IsPaneOpen="{Binding IsChecked, ElementName=tb_navigationToggle, Mode=TwoWay}" Name="sv_splitview" Margin="0">
                 <SplitView.Pane>
                     <!-- Optional Color 2982CC -->
-                    <ListView SelectionChanged="lv_navigation_SelectionChanged" IsItemClickEnabled="True" ItemClick="lv_navigation_ItemClick" Name="lv_navigation" ItemsSource="{Binding Path=Lessons}" ScrollViewer.VerticalScrollBarVisibility="Hidden" Background="#13697F" Width="300">
+                    <ListView SelectionChanged="Lv_navigation_SelectionChanged" IsItemClickEnabled="True" ItemClick="Lv_navigation_ItemClick" Name="lv_navigation" ItemsSource="{Binding Path=Lessons}" ScrollViewer.VerticalScrollBarVisibility="Hidden" Background="#13697F" Width="300">
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <Grid>

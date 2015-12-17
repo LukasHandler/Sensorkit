@@ -1,23 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.Devices.Gpio;
-using Windows.UI;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Shapes;
+﻿//----------------------------------------------------------------------------------------------
+// <copyright file="Lesson3.cs" company="Lukas Handler">
+// Copyright (c) Lukas Handler.  All rights reserved.
+// </copyright>
+//-------------------------------------------------------------------------------------------------
 
 namespace Sensorkit.LessonClasses
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+
+    using Windows.Devices.Gpio;
+    using Windows.UI;
+    using Windows.UI.Xaml.Controls;
+    using Windows.UI.Xaml.Media;
+    using Windows.UI.Xaml.Shapes;
+
     public class Lesson3 : Lesson
     {
-        enum LedStatus { Red, Green, Mixed, None };
         private LedStatus ledStatus;
+        private Ellipse outputLED;
         private GpioPin redPin;
         private GpioPin yellowPin;
-        private Ellipse outputLED;
+
+        enum LedStatus
+        {
+            Red, Green, Mixed, None
+        }
 
         public void Start(StackPanel output)
         {
@@ -29,9 +40,64 @@ namespace Sensorkit.LessonClasses
 
             Init();
 
-            timer.Interval = TimeSpan.FromMilliseconds(500);
-            timer.Tick += Timer_Tick;
-            timer.Start();
+            Timer.Interval = TimeSpan.FromMilliseconds(500);
+            Timer.Tick += Timer_Tick;
+            Timer.Start();
+        }
+
+        protected override void OnStop()
+        {
+            if (redPin != null)
+            {
+                redPin.Write(GpioPinValue.Low);
+                redPin.Dispose();
+            }
+
+            if (yellowPin != null)
+            {
+                yellowPin.Write(GpioPinValue.Low);
+                yellowPin.Dispose();
+            }
+        }
+
+        private void FlipLED()
+        {
+            switch (ledStatus)
+            {
+            case LedStatus.None:
+            {
+                redPin.Write(GpioPinValue.High);
+                ledStatus = LedStatus.Red;
+                outputLED.Fill = new SolidColorBrush(Colors.Red);
+                break;
+            }
+
+            case LedStatus.Red:
+            {
+                yellowPin.Write(GpioPinValue.High);
+                ledStatus = LedStatus.Mixed;
+                outputLED.Fill = new SolidColorBrush(Colors.Orange);
+                break;
+            }
+
+            case LedStatus.Mixed:
+            {
+                redPin.Write(GpioPinValue.Low);
+                yellowPin.Write(GpioPinValue.High);
+                ledStatus = LedStatus.Green;
+                outputLED.Fill = new SolidColorBrush(Colors.Green);
+                break;
+            }
+
+            case LedStatus.Green:
+            {
+                yellowPin.Write(GpioPinValue.Low);
+                redPin.Write(GpioPinValue.High);
+                ledStatus = LedStatus.Red;
+                outputLED.Fill = new SolidColorBrush(Colors.Red);
+                break;
+            }
+            }
         }
 
         private void Init()
@@ -53,59 +119,6 @@ namespace Sensorkit.LessonClasses
         private void Timer_Tick(object sender, object e)
         {
             FlipLED();
-        }
-
-        private void FlipLED()
-        {
-            switch (ledStatus)
-            {
-                case LedStatus.None:
-                    {
-                        redPin.Write(GpioPinValue.High);
-                        ledStatus = LedStatus.Red;
-                        outputLED.Fill = new SolidColorBrush(Colors.Red);
-                        break;
-                    }
-                case LedStatus.Red:
-                    {
-                        yellowPin.Write(GpioPinValue.High);
-                        ledStatus = LedStatus.Mixed;
-                        outputLED.Fill = new SolidColorBrush(Colors.Orange);
-                        break;
-                    }
-                case LedStatus.Mixed:
-                    {
-                        redPin.Write(GpioPinValue.Low);
-                        yellowPin.Write(GpioPinValue.High);
-                        ledStatus = LedStatus.Green;
-                        outputLED.Fill = new SolidColorBrush(Colors.Green);
-                        break;
-                    }
-                case LedStatus.Green:
-                    {
-                        yellowPin.Write(GpioPinValue.Low);
-                        redPin.Write(GpioPinValue.High);
-                        ledStatus = LedStatus.Red;
-                        outputLED.Fill = new SolidColorBrush(Colors.Red);
-                        break;
-                    }
-            }
-
-        }
-
-        protected override void OnStop()
-        {
-            if (redPin != null)
-            {
-                redPin.Write(GpioPinValue.Low);
-                redPin.Dispose();
-            }
-
-            if (yellowPin != null)
-            {
-                yellowPin.Write(GpioPinValue.Low);
-                yellowPin.Dispose();
-            }
         }
     }
 }

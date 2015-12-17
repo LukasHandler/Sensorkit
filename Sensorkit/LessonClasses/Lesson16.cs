@@ -1,20 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.Devices.Gpio;
-using Windows.UI;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Shapes;
-
-namespace Sensorkit.LessonClasses
+﻿namespace Sensorkit.LessonClasses
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+
+    using Windows.Devices.Gpio;
+    using Windows.UI;
+    using Windows.UI.Xaml.Controls;
+    using Windows.UI.Xaml.Media;
+    using Windows.UI.Xaml.Shapes;
+
     public class Lesson16 : Lesson
     {
-        private GpioPin magicCup;
         private GpioPin ledPin;
+        private GpioPin magicCup;
         private Ellipse outputLED;
 
         public void Start(StackPanel output)
@@ -28,9 +29,23 @@ namespace Sensorkit.LessonClasses
             outputLED.Stroke = new SolidColorBrush(Colors.Black);
             output.Children.Add(outputLED);
 
-            timer.Interval = TimeSpan.FromMilliseconds(10);
-            timer.Tick += Timer_Tick;
-            timer.Start();
+            Timer.Interval = TimeSpan.FromMilliseconds(10);
+            Timer.Tick += Timer_Tick;
+            Timer.Start();
+        }
+
+        protected override void OnStop()
+        {
+            if (magicCup != null)
+            {
+                magicCup.Dispose();
+            }
+
+            if (ledPin != null)
+            {
+                ledPin.Write(GpioPinValue.Low);
+                ledPin.Dispose();
+            }
         }
 
         private void Init()
@@ -47,11 +62,6 @@ namespace Sensorkit.LessonClasses
             ledPin.SetDriveMode(GpioPinDriveMode.Output);
         }
 
-        private void Timer_Tick(object sender, object e)
-        {
-            Run();
-        }
-
         private void Run()
         {
             if (magicCup.Read() == GpioPinValue.High)
@@ -66,18 +76,9 @@ namespace Sensorkit.LessonClasses
             }
         }
 
-        protected override void OnStop()
+        private void Timer_Tick(object sender, object e)
         {
-            if (magicCup != null)
-            {
-                magicCup.Dispose();
-            }
-
-            if (ledPin != null)
-            {
-                ledPin.Write(GpioPinValue.Low);
-                ledPin.Dispose();
-            }
+            Run();
         }
     }
 }

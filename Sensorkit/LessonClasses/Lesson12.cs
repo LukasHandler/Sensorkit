@@ -1,18 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.Devices.Gpio;
-using Windows.UI.Xaml.Controls;
-
-namespace Sensorkit.LessonClasses
+﻿namespace Sensorkit.LessonClasses
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+
+    using Windows.Devices.Gpio;
+    using Windows.UI.Xaml.Controls;
+
     public class Lesson12 : Lesson
     {
         private GpioPin btnPin;
-        private GpioPin ledPin;
         private bool isOn;
+        private GpioPin ledPin;
         private TextBlock text;
 
         public void Start(StackPanel output)
@@ -21,9 +22,23 @@ namespace Sensorkit.LessonClasses
             output.Children.Add(text);
 
             Init();
-            timer.Interval = TimeSpan.FromMilliseconds(100);
-            timer.Tick += Timer_Tick;
-            timer.Start();
+            Timer.Interval = TimeSpan.FromMilliseconds(100);
+            Timer.Tick += Timer_Tick;
+            Timer.Start();
+        }
+
+        protected override void OnStop()
+        {
+            if (ledPin != null)
+            {
+                ledPin.Write(GpioPinValue.Low);
+                ledPin.Dispose();
+            }
+
+            if (btnPin != null)
+            {
+                btnPin.Dispose();
+            }
         }
 
         private void Init()
@@ -38,11 +53,6 @@ namespace Sensorkit.LessonClasses
 
             btnPin.SetDriveMode(GpioPinDriveMode.Input);
             ledPin.SetDriveMode(GpioPinDriveMode.Output);
-        }
-
-        private void Timer_Tick(object sender, object e)
-        {
-            Run();
         }
 
         private void Run()
@@ -70,18 +80,9 @@ namespace Sensorkit.LessonClasses
             text.Text = "";
         }
 
-        protected override void OnStop()
+        private void Timer_Tick(object sender, object e)
         {
-            if (ledPin != null)
-            {
-                ledPin.Write(GpioPinValue.Low);
-                ledPin.Dispose();
-            }
-
-            if (btnPin != null)
-            {
-                btnPin.Dispose();
-            }
+            Run();
         }
     }
 }

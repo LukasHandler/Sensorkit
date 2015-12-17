@@ -1,31 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-
-namespace Sensorkit.LessonClasses
+﻿namespace Sensorkit.LessonClasses
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading;
+    using System.Threading.Tasks;
+
+    using Windows.UI.Xaml;
+    using Windows.UI.Xaml.Controls;
+
     public abstract class Lesson
     {
-        protected DispatcherTimer timer;
-
         public Lesson()
         {
-            timer = new DispatcherTimer();
+            this.Timer = new DispatcherTimer();
+        }
+
+        protected DispatcherTimer Timer
+        {
+            get;
+            set;
         }
 
         public void Stop()
         {
-            if (timer != null && timer.IsEnabled)
+            if (this.Timer != null && this.Timer.IsEnabled)
             {
-                timer.Stop();
+                this.Timer.Stop();
             }
 
-            OnStop();
+            this.OnStop();
         }
 
         protected abstract void OnStop();

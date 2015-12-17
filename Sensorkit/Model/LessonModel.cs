@@ -1,4 +1,9 @@
-﻿namespace Sensorkit.Model
+﻿//----------------------------------------------------------------------------------------------
+// <copyright file="LessonModel.cs" company="Lukas Handler">
+// Copyright (c) Lukas Handler.  All rights reserved.
+// </copyright>
+//-------------------------------------------------------------------------------------------------
+namespace Sensorkit.Model
 {
     using System;
     using System.Collections.Generic;
@@ -8,13 +13,34 @@
 
     public class LessonModel
     {
-        public int Id { get; set; }
+        public string[] Arguments
+        {
+            get;
+            set;
+        }
 
-        public bool RunAble { get; set; }
+        public string Content
+        {
+            get;
+            set;
+        }
 
-        public string Name { get; set; }
-        public string Content { get; set; }
+        public int Id
+        {
+            get;
+            set;
+        }
 
-        public string[] Arguments { get; set; }
+        public string Name
+        {
+            get;
+            set;
+        }
+
+        public bool RunAble
+        {
+            get;
+            set;
+        }
     }
 }

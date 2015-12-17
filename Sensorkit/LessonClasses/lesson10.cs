@@ -1,22 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Windows.Devices.Gpio;
-using Windows.UI;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Shapes;
-
-namespace Sensorkit.LessonClasses
+﻿namespace Sensorkit.LessonClasses
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading;
+    using System.Threading.Tasks;
+
+    using Windows.Devices.Gpio;
+    using Windows.UI;
+    using Windows.UI.Xaml;
+    using Windows.UI.Xaml.Controls;
+    using Windows.UI.Xaml.Media;
+    using Windows.UI.Xaml.Shapes;
+
     public class Lesson10 : Lesson
     {
-        private GpioPin csPin;
         private GpioPin clkPin;
+        private GpioPin csPin;
         private GpioPin dioPin;
         private TextBlock outputText;
 
@@ -26,37 +27,34 @@ namespace Sensorkit.LessonClasses
             output.Children.Add(outputText);
 
             Init();
-            timer.Interval = TimeSpan.FromMilliseconds(500);
-            timer.Tick += Timer_Tick;
-            timer.Start();
+            Timer.Interval = TimeSpan.FromMilliseconds(500);
+            Timer.Tick += Timer_Tick;
+            Timer.Start();
         }
 
-        private void Init()
+        protected override void OnStop()
         {
-            const int ADC_CS_PIN = 22;
-            const int ADC_CLK_PIN = 18;
-            const int ADC_DIO_PIN = 27;
+            if (csPin != null)
+            {
+                csPin.Write(GpioPinValue.Low);
+                csPin.Dispose();
+            }
 
-            var gpio = GpioController.GetDefault();
+            if (clkPin != null)
+            {
+                clkPin.Write(GpioPinValue.Low);
+                clkPin.Dispose();
+            }
 
-            csPin = gpio.OpenPin(ADC_CS_PIN);
-            clkPin = gpio.OpenPin(ADC_CLK_PIN);
-            dioPin = gpio.OpenPin(ADC_DIO_PIN);
+            if (dioPin != null)
+            {
+                if (dioPin.GetDriveMode() == GpioPinDriveMode.Output)
+                {
+                    dioPin.Write(GpioPinValue.Low);
+                }
 
-            csPin.SetDriveMode(GpioPinDriveMode.Output);
-            clkPin.SetDriveMode(GpioPinDriveMode.Output);
-            dioPin.SetDriveMode(GpioPinDriveMode.Output);
-        }
-
-        private void Timer_Tick(object sender, object e)
-        {
-            OnStop();
-            Init();
-            var analogValue = CheckTemp();
-            //double temp = Math.Round(getTempfromThermister(analogValue), 2);
-            var temp = analogValue;
-
-            outputText.Text = Convert.ToString(temp);
+                dioPin.Dispose();
+            }
         }
 
         private int CheckTemp()
@@ -102,12 +100,12 @@ namespace Sensorkit.LessonClasses
 
                 switch (dioPin.Read())
                 {
-                    case GpioPinValue.Low:
-                        read = 0;
-                        break;
-                    case GpioPinValue.High:
-                        read = 1;
-                        break;
+                case GpioPinValue.Low:
+                    read = 0;
+                    break;
+                case GpioPinValue.High:
+                    read = 1;
+                    break;
                 }
 
                 dat1 = dat1 << 1 | read;
@@ -119,12 +117,12 @@ namespace Sensorkit.LessonClasses
 
                 switch (dioPin.Read())
                 {
-                    case GpioPinValue.Low:
-                        read = 0;
-                        break;
-                    case GpioPinValue.High:
-                        read = 1;
-                        break;
+                case GpioPinValue.Low:
+                    read = 0;
+                    break;
+                case GpioPinValue.High:
+                    read = 1;
+                    break;
                 }
 
                 dat2 = dat2 | read << i;
@@ -140,54 +138,31 @@ namespace Sensorkit.LessonClasses
             return (dat1 == dat2) ? dat1 : 0;
         }
 
-        protected override void OnStop()
+        private void Init()
         {
-            if (csPin != null)
-            {
-                csPin.Write(GpioPinValue.Low);
-                csPin.Dispose();
-            }
+            const int ADC_CS_PIN = 22;
+            const int ADC_CLK_PIN = 18;
+            const int ADC_DIO_PIN = 27;
 
-            if (clkPin != null)
-            {
-                clkPin.Write(GpioPinValue.Low);
-                clkPin.Dispose();
-            }
+            var gpio = GpioController.GetDefault();
 
-            if (dioPin != null)
-            {
-                if (dioPin.GetDriveMode() == GpioPinDriveMode.Output)
-                {
-                    dioPin.Write(GpioPinValue.Low);
-                }
+            csPin = gpio.OpenPin(ADC_CS_PIN);
+            clkPin = gpio.OpenPin(ADC_CLK_PIN);
+            dioPin = gpio.OpenPin(ADC_DIO_PIN);
 
-                dioPin.Dispose();
-            }
+            csPin.SetDriveMode(GpioPinDriveMode.Output);
+            clkPin.SetDriveMode(GpioPinDriveMode.Output);
+            dioPin.SetDriveMode(GpioPinDriveMode.Output);
         }
 
-        private double getTempfromThermister(double rawADC)
+        private void Timer_Tick(object sender, object e)
         {
+            OnStop();
+            Init();
+            var analogValue = CheckTemp();
+            var temp = analogValue;
 
-            double KY_013Resistor = 10000; // For a 10k resistance thermistor.
-
-            // The b_constant value its been extracted from the datasheet for a 
-
-            // 10K thermistor NXRT15XH103FA5B, which is closer sensor I found.
-
-            double b_constant = 3380.0;
-
-            double t0 = 298; // 273 + 25, constant of the S.Hart equation.
-
-            double celciusAdjustment = 273.15;
-
-            double adc8BitPrecision = 256;
-
-            double resisADC = ((adc8BitPrecision / rawADC) - 1) * KY_013Resistor;
-
-            double farenh = b_constant / Math.Log(resisADC / (KY_013Resistor * Math.Exp(-b_constant / t0)));
-
-            return farenh - celciusAdjustment;
-
+            outputText.Text = Convert.ToString(temp);
         }
     }
 }

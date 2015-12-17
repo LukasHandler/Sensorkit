@@ -1,24 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.Devices.Gpio;
-using Windows.UI;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Shapes;
-
-namespace Sensorkit.LessonClasses
+﻿namespace Sensorkit.LessonClasses
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+
+    using Windows.Devices.Gpio;
+    using Windows.UI;
+    using Windows.UI.Xaml.Controls;
+    using Windows.UI.Xaml.Media;
+    using Windows.UI.Xaml.Shapes;
+
     public class Lesson4 : Lesson
     {
-        private GpioPin shockPin;
-        private GpioPin ledPin;
         private int count;
-        private TextBlock outputText;
         private TextBlock counter;
+        private GpioPin ledPin;
         private Ellipse outputLED;
+        private TextBlock outputText;
+        private GpioPin shockPin;
 
         public void Start(StackPanel output)
         {
@@ -37,28 +38,23 @@ namespace Sensorkit.LessonClasses
 
             Init();
 
-            timer.Interval = TimeSpan.FromMilliseconds(10);
-            timer.Tick += Timer_Tick;
-            timer.Start();
+            Timer.Interval = TimeSpan.FromMilliseconds(10);
+            Timer.Tick += Timer_Tick;
+            Timer.Start();
         }
 
-        private void Init()
+        protected override void OnStop()
         {
-            const int SHOCK_PIN = 27;
-            const int LED_PIN = 18;
+            if (shockPin != null)
+            {
+                shockPin.Dispose();
+            }
 
-            var gpio = GpioController.GetDefault();
-
-            shockPin = gpio.OpenPin(SHOCK_PIN);
-            ledPin = gpio.OpenPin(LED_PIN);
-
-            shockPin.SetDriveMode(GpioPinDriveMode.Input);
-            ledPin.SetDriveMode(GpioPinDriveMode.Output);
-        }
-
-        private void Timer_Tick(object sender, object e)
-        {
-            CheckShake();
+            if (ledPin != null)
+            {
+                ledPin.Write(GpioPinValue.Low);
+                ledPin.Dispose();
+            }
         }
 
         private void CheckShake()
@@ -85,18 +81,23 @@ namespace Sensorkit.LessonClasses
             outputLED.Fill = new SolidColorBrush(Colors.White);
         }
 
-        protected override void OnStop()
+        private void Init()
         {
-            if (shockPin != null)
-            {
-                shockPin.Dispose();
-            }
+            const int SHOCK_PIN = 27;
+            const int LED_PIN = 18;
 
-            if (ledPin != null)
-            {
-                ledPin.Write(GpioPinValue.Low);
-                ledPin.Dispose();
-            }
+            var gpio = GpioController.GetDefault();
+
+            shockPin = gpio.OpenPin(SHOCK_PIN);
+            ledPin = gpio.OpenPin(LED_PIN);
+
+            shockPin.SetDriveMode(GpioPinDriveMode.Input);
+            ledPin.SetDriveMode(GpioPinDriveMode.Output);
+        }
+
+        private void Timer_Tick(object sender, object e)
+        {
+            CheckShake();
         }
     }
 }

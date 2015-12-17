@@ -1,21 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.Devices.Gpio;
-using Windows.UI;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Shapes;
-
-namespace Sensorkit.LessonClasses
+﻿namespace Sensorkit.LessonClasses
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+
+    using Windows.Devices.Gpio;
+    using Windows.UI;
+    using Windows.UI.Xaml.Controls;
+    using Windows.UI.Xaml.Media;
+    using Windows.UI.Xaml.Shapes;
+
     public class Lesson6 : Lesson
     {
-        private GpioPin irPin;
-
         private GpioPinValue currentValue;
+        private GpioPin irPin;
         private Ellipse outputLED;
 
         public void Start(StackPanel output)
@@ -29,30 +29,17 @@ namespace Sensorkit.LessonClasses
 
             Init();
 
-            timer.Interval = TimeSpan.FromMilliseconds(500);
-            timer.Tick += Timer_Tick;
-            timer.Start();
+            Timer.Interval = TimeSpan.FromMilliseconds(500);
+            Timer.Tick += Timer_Tick;
+            Timer.Start();
         }
 
-        private void Timer_Tick(object sender, object e)
+        protected override void OnStop()
         {
-            Run();
-        }
-
-        private void Run()
-        {
-            switch(currentValue)
+            if (irPin != null)
             {
-                case GpioPinValue.High:
-                    irPin.Write(GpioPinValue.Low);
-                    currentValue = GpioPinValue.Low;
-                    outputLED.Fill = new SolidColorBrush(Colors.White);
-                    break;
-                case GpioPinValue.Low:
-                    irPin.Write(GpioPinValue.High);
-                    currentValue = GpioPinValue.High;
-                    outputLED.Fill = new SolidColorBrush(Colors.Red);
-                    break;
+                irPin.Write(GpioPinValue.Low);
+                irPin.Dispose();
             }
         }
 
@@ -69,13 +56,26 @@ namespace Sensorkit.LessonClasses
             currentValue = GpioPinValue.Low;
         }
 
-        protected override void OnStop()
+        private void Run()
         {
-            if (irPin != null)
+            switch (currentValue)
             {
+            case GpioPinValue.High:
                 irPin.Write(GpioPinValue.Low);
-                irPin.Dispose();
+                currentValue = GpioPinValue.Low;
+                outputLED.Fill = new SolidColorBrush(Colors.White);
+                break;
+            case GpioPinValue.Low:
+                irPin.Write(GpioPinValue.High);
+                currentValue = GpioPinValue.High;
+                outputLED.Fill = new SolidColorBrush(Colors.Red);
+                break;
             }
+        }
+
+        private void Timer_Tick(object sender, object e)
+        {
+            Run();
         }
     }
 }

@@ -1,13 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.Devices.Gpio;
-using Windows.UI.Xaml.Controls;
-
-namespace Sensorkit.LessonClasses
+﻿namespace Sensorkit.LessonClasses
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+
+    using Windows.Devices.Gpio;
+    using Windows.UI.Xaml.Controls;
+
     public class Lesson11 : Lesson
     {
         private GpioPin buzzerPin;
@@ -16,9 +17,18 @@ namespace Sensorkit.LessonClasses
         public void Start(StackPanel output)
         {
             ActiveBuzzerInit();
-            timer.Interval = TimeSpan.FromMilliseconds(100);
-            timer.Tick += ActiveBuzzerTimerTick;
-            timer.Start();
+            Timer.Interval = TimeSpan.FromMilliseconds(100);
+            Timer.Tick += ActiveBuzzerTimerTick;
+            Timer.Start();
+        }
+
+        protected override void OnStop()
+        {
+            if (buzzerPin != null)
+            {
+                buzzerPin.Write(GpioPinValue.Low);
+                buzzerPin.Dispose();
+            }
         }
 
         private void ActiveBuzzerInit()
@@ -30,11 +40,6 @@ namespace Sensorkit.LessonClasses
             buzzerPin = gpio.OpenPin(BUZZER_PIN);
 
             buzzerPin.SetDriveMode(GpioPinDriveMode.Output);
-        }
-
-        private void ActiveBuzzerTimerTick(object sender, object e)
-        {
-            ActiveBuzzerRun();
         }
 
         private void ActiveBuzzerRun()
@@ -52,13 +57,9 @@ namespace Sensorkit.LessonClasses
             }
         }
 
-        protected override void OnStop()
+        private void ActiveBuzzerTimerTick(object sender, object e)
         {
-            if (buzzerPin != null)
-            {
-                buzzerPin.Write(GpioPinValue.Low);
-                buzzerPin.Dispose();
-            }
+            ActiveBuzzerRun();
         }
     }
 }

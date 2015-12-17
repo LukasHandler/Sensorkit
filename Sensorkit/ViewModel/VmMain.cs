@@ -1,34 +1,53 @@
-﻿using Sensorkit.Model;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
-using System.Linq;
-using System.Text;
-using Windows.ApplicationModel.Resources;
-using Windows.Devices.Gpio;
-using Windows.Security.ExchangeActiveSyncProvisioning;
-using System.Reflection;
-using Sensorkit.LessonClasses;
-using Windows.UI.Xaml.Controls;
+﻿//----------------------------------------------------------------------------------------------
+// <copyright file="VmMain.cs" company="Lukas Handler">
+// Copyright (c) Lukas Handler.  All rights reserved.
+// </copyright>
+// <summary>
+// The ViewModel for the <c>MainPage</c>.
+// </summary>
+//-------------------------------------------------------------------------------------------------
 
 namespace Sensorkit.ViewModel
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Reflection;
+    using Sensorkit.LessonClasses;
+    using Sensorkit.Model;
+    using Windows.ApplicationModel.Resources;
+    using Windows.Devices.Gpio;
+    using Windows.Security.ExchangeActiveSyncProvisioning;
+    using Windows.UI.Xaml.Controls;
+
+    /// <summary>
+    /// This creates the lessons from the resources and provides functionality for the <c>MainPage</c>.
+    /// </summary>
     public class VmMain
     {
         /// <summary>
-        /// All our lessons are in here.
+        /// The accessor for the resources.
         /// </summary>
-        public List<LessonModel> Lessons { get; set; }
-
         private static ResourceLoader resources = ResourceLoader.GetForCurrentView("Messages");
+
+        /// <summary>
+        /// Gets or sets the lessons.
+        /// </summary>
+        /// <value>
+        /// The lessons.
+        /// </value>
+        public List<LessonModel> Lessons
+        {
+            get;
+            set;
+        }
 
         /// <summary>
         /// Creating the lessons.
         /// </summary>
         public void CreateLessons()
         {
-            Lessons = new List<LessonModel>();
+            this.Lessons = new List<LessonModel>();
 
             ResourceLoader resources = ResourceLoader.GetForCurrentView("Lessons");
 
@@ -66,14 +85,22 @@ namespace Sensorkit.ViewModel
                 string args = resources.GetString("lesson" + i + "args");
                 var argsArray = args.Split('#');
 
-                LessonModel lesson = new LessonModel() { Id = i, RunAble = runAble, Name = headLine, Content = content, Arguments = argsArray };
-                Lessons.Add(lesson);
+                LessonModel lesson = new LessonModel()
+                {
+                    Id = i,
+                    RunAble = runAble,
+                    Name = headLine,
+                    Content = content,
+                    Arguments = argsArray
+                };
+                this.Lessons.Add(lesson);
             }
         }
 
         /// <summary>
-        /// Is a Raspberry Pi conntected?
+        /// Determines whether a Raspberry Pi is connected or not.
         /// </summary>
+        /// <returns>True if a Raspberry Pi is connected.</returns>
         public bool IsRaspConnected()
         {
             GpioController gpio;
@@ -102,7 +129,12 @@ namespace Sensorkit.ViewModel
             return true;
         }
 
-        public string validateSystem(LessonModel lesson)
+        /// <summary>
+        /// Checks if running the current lesson is valid.
+        /// </summary>
+        /// <param name="lesson">The lesson the user would like to run.</param>
+        /// <returns>A string containing an error message or <c>String.Empty</c> if everything's fine.</returns>
+        public string ValidateSystem(LessonModel lesson)
         {
             string errorMessage = string.Empty;
 
@@ -173,4 +205,3 @@ namespace Sensorkit.ViewModel
         }
     }
 }
-

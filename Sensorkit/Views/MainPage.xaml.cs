@@ -1,66 +1,149 @@
-﻿namespace Sensorkit
+﻿//----------------------------------------------------------------------------------------------
+// <copyright file="MainPage.xaml.cs" company="Lukas Handler">
+// Copyright (c) Lukas Handler.  All rights reserved.
+// </copyright>
+// <summary>
+// This is the start page of the application.
+// </summary>
+//-------------------------------------------------------------------------------------------------
+namespace Sensorkit
 {
-    using Sensorkit.Model;
     using System;
+    using System.Linq;
+    using Model;
+    using ViewModel;
+    using Windows.UI.Popups;
+    using Windows.UI.Text;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Media.Imaging;
-    using Windows.UI.Text;
-    using Sensorkit.ViewModel;
-    using Windows.UI.Popups;
-    using System.Reflection;
     using Windows.UI.Xaml.Navigation;
-    using LessonClasses;
-    using System.Linq;
-    using Windows.ApplicationModel.Resources;
-    using Windows.UI.Xaml.Media;
-    using Windows.UI;
 
     /// <summary>
     /// Page where you can click through the tutorial or start an exercise when the device it's running on is the raspberry pi b+.
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        private VmMain modelViewMain;
-
-        // Indicates which index gets selected when the site gets called.
+        /// <summary>
+        /// Indicates which index gets selected when the site gets called.
+        /// </summary>
         private int index;
 
-        // Start settings - Useful if you don't want to connect your raspberry pi to an output device. Given "lesson" id will start automatically.
+        /// <summary>
+        /// Useful if you don't want to connect your raspberry pi to an output device.
+        /// </summary>
         private bool justRun = false;
+
+        /// <summary>
+        ///  Given "lesson" id will start automatically if justRun = true.
+        /// </summary>
         private int lesson = 0;
 
         /// <summary>
-        /// Some initial configuration is in here. Also getting the Lessons.
+        /// This is the ViewModel for the MainPage.
+        /// </summary>
+        private VmMain modelViewMain;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MainPage"/> class.
         /// </summary>
         public MainPage()
         {
             // Sets the start index to lesson 0. This will be overwritten later in the "OnWindowLoaded" Method when navigated back from RunPage.
-            index = 0;
+            this.index = 0;
 
-            modelViewMain = new VmMain();
-            modelViewMain.CreateLessons();
+            this.modelViewMain = new VmMain();
+            this.modelViewMain.CreateLessons();
 
-            DataContext = modelViewMain;
+            this.DataContext = this.modelViewMain;
 
             this.InitializeComponent();
         }
 
         /// <summary>
-        /// Fill content page generic with labels and pictures from the ressource file.
+        /// Setting the current index when navigated back from the RunPage.
         /// </summary>
-        private void lv_navigation_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        /// <param name="e">Arguments that contains our lesson we started earlier.</param>
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            try
+            {
+                this.index = (int)e.Parameter;
+            }
+            catch (Exception)
+            {
+                return;
+            }
+        }
+
+        /// <summary>
+        /// Checking if you can play the current lesson when clicking the play-button. Does the called lesson have a code behind? A Start Method? Are you running on a Raspberry Pi B+.
+        /// </summary>
+        /// <param name="sender">The sender of this Event.</param>
+        /// <param name="e">Arguments of the event.</param>
+        private async void Btn_play_Click(object sender, RoutedEventArgs e)
+        {
+            string errorMessage = this.modelViewMain.ValidateSystem((LessonModel)lv_navigation.SelectedItem);
+
+            if (errorMessage == null)
+            {
+                Tuple<LessonModel, bool> value = new Tuple<LessonModel, bool>(this.modelViewMain.Lessons[((LessonModel)lv_navigation.SelectedItem).Id], this.justRun);
+                Frame.Navigate(typeof(RunPage), value);
+            }
+            else
+            {
+                if (this.modelViewMain.IsRaspConnected())
+                {
+                    scrollViewer.ChangeView(0, 0, null);
+                    TextBlock errorText = (TextBlock)grid_content.Children[0];
+                    errorText.Text = errorMessage;
+                    errorText.Visibility = Visibility.Visible;
+                    errorText.TextWrapping = TextWrapping.Wrap;
+                }
+                else
+                {
+                    var dialog = new MessageDialog(errorMessage);
+                    await dialog.ShowAsync();
+                    return;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Close navigation <c>splitview</c> when width is smaller than 641.
+        /// </summary>
+        /// <param name="sender">The sender of this Event.</param>
+        /// <param name="e">Arguments of the event.</param>
+        private void Lv_navigation_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            double width = Window.Current.Bounds.Width;
+
+            if (width < 641)
+            {
+                tb_navigationToggle.IsChecked = false;
+            }
+        }
+
+        /// <summary>
+        /// Fill content page generic with labels and pictures from the resource file.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="SelectionChangedEventArgs"/> instance containing the event data.</param>
+        private void Lv_navigation_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             grid_content.Children.Clear();
             grid_content.RowDefinitions.Clear();
 
             var listview = sender as ListView;
-            var selectedLesson = ((LessonModel)listview.SelectedItem);
+            var selectedLesson = (LessonModel)listview.SelectedItem;
 
             int currentRow = 0;
 
             // Empty Error Text
-            grid_content.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
+            grid_content.RowDefinitions.Add(new RowDefinition()
+            {
+                Height = GridLength.Auto
+            });
             TextBlock errorText = new TextBlock();
             errorText.Margin = new Thickness(5);
             errorText.FontSize = 20;
@@ -70,7 +153,10 @@
             currentRow++;
 
             // Headline
-            grid_content.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
+            grid_content.RowDefinitions.Add(new RowDefinition()
+            {
+                Height = GridLength.Auto
+            });
             TextBlock header = new TextBlock();
             header.Margin = new Thickness(5);
             header.SetValue(Grid.RowProperty, currentRow);
@@ -84,7 +170,10 @@
 
             foreach (var item in parts)
             {
-                grid_content.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
+                grid_content.RowDefinitions.Add(new RowDefinition()
+                {
+                    Height = GridLength.Auto
+                });
                 currentRow++;
 
                 // Image
@@ -108,9 +197,9 @@
 
                     grid_content.Children.Add(img);
                 }
-                // Text
                 else
                 {
+                    // Text
                     TextBlock text = new TextBlock();
                     text.Margin = new Thickness(10, 5, 5, 5);
                     text.SetValue(Grid.RowProperty, currentRow);
@@ -132,89 +221,32 @@
         }
 
         /// <summary>
-        /// Close navigation splitview when width is smaller than 641. 
+        /// Gets the current Item from the index or starts a lesson when justRun is true.
         /// </summary>
-        private void lv_navigation_ItemClick(object sender, ItemClickEventArgs e)
-        {
-            double width = Window.Current.Bounds.Width;
-
-            if (width < 641)
-            {
-                tb_navigationToggle.IsChecked = false;
-            }
-        }
-
-        /// <summary>
-        /// Select lesson index when window gets loaded.
-        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
         private void OnWindowLoaded(object sender, RoutedEventArgs e)
         {
-            if (justRun)
+            if (this.justRun)
             {
-                var selectedItem = modelViewMain.Lessons.FirstOrDefault(l => l.Id == lesson);
+                var selectedItem = this.modelViewMain.Lessons.FirstOrDefault(l => l.Id == this.lesson);
 
                 if (selectedItem != null)
                 {
                     lv_navigation.SelectedItem = selectedItem;
                 }
 
-                index = lesson;
-                btn_play_Click(null, null);
+                this.index = this.lesson;
+                this.Btn_play_Click(null, null);
             }
             else
             {
-                var selectedItem = modelViewMain.Lessons.FirstOrDefault(l => l.Id == index);
+                var selectedItem = this.modelViewMain.Lessons.FirstOrDefault(l => l.Id == this.index);
 
                 if (selectedItem != null)
                 {
                     lv_navigation.SelectedItem = selectedItem;
                 }
-            }
-        }
-
-        /// <summary>
-        /// Checking if you can play the current lesson when clicking on the playbutton. Does the called lesson have a code behind? A Start Method? Are you running on a Raspberry Pi B+.
-        /// </summary>
-        private async void btn_play_Click(object sender, RoutedEventArgs e)
-        {
-            string errorMessage = modelViewMain.validateSystem((LessonModel)lv_navigation.SelectedItem);
-
-            if (errorMessage == null)
-            {
-                Tuple<LessonModel, bool> value = new Tuple<LessonModel, bool>(modelViewMain.Lessons[((LessonModel)lv_navigation.SelectedItem).Id], justRun);
-                Frame.Navigate(typeof(RunPage), value);
-            }
-            else
-            {
-                if (modelViewMain.IsRaspConnected())
-                {
-                    scrollViewer.ChangeView(0, 0, null);
-                    TextBlock errorText = ((TextBlock)grid_content.Children[0]);
-                    errorText.Text = errorMessage;
-                    errorText.Visibility = Visibility.Visible;
-                    errorText.TextWrapping = TextWrapping.Wrap;
-                }
-                else
-                {
-                    var dialog = new MessageDialog(errorMessage);
-                    await dialog.ShowAsync();
-                    return;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Setting the current index when navigated back from the RunPage.
-        /// </summary>
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            try
-            {
-                index = (int)e.Parameter;
-            }
-            catch (Exception)
-            {
-                return;
             }
         }
     }

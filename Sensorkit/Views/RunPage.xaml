@@ -14,7 +14,7 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Grid Background="LightBlue" Grid.Row="0">
-            <Button Style="{ThemeResource NavigationBackButtonNormalStyle}" Name="btn_back" Click="btn_back_Click" Height="50"/>
+            <Button Style="{ThemeResource NavigationBackButtonNormalStyle}" Name="btn_back" Click="Btn_back_Click" Height="50"/>
         </Grid>
         <Grid Grid.Row="2">
             <ScrollViewer>
@@ -29,7 +29,7 @@
                     <Grid Name="Input">
                     </Grid>
                     <!--<Button Content="&#xE830;" Style="{ThemeResource PlayButton}" Click="Button_Click"/>-->
-                    <Button Margin="10" Name="btn_run" Click="btn_run_Click">
+                    <Button Margin="10" Name="btn_run" Click="Btn_run_Click">
                         <SymbolIcon Height="20" Width="50" Symbol="Play" Name="StartStopButton"></SymbolIcon>
                     </Button>
                     <TextBlock Margin="10" FontWeight="SemiBold" Name="txt_output"></TextBlock>

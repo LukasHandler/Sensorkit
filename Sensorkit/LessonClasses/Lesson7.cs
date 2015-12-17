@@ -1,21 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.Devices.Gpio;
-using Windows.UI;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Shapes;
-
-namespace Sensorkit.LessonClasses
+﻿namespace Sensorkit.LessonClasses
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+
+    using Windows.Devices.Gpio;
+    using Windows.UI;
+    using Windows.UI.Xaml.Controls;
+    using Windows.UI.Xaml.Media;
+    using Windows.UI.Xaml.Shapes;
+
     public class Lesson7 : Lesson
     {
-        private GpioPin laserPin;
-
         private GpioPinValue currentValue;
+        private GpioPin laserPin;
         private Ellipse outputLED;
 
         public void Start(StackPanel output)
@@ -29,9 +29,18 @@ namespace Sensorkit.LessonClasses
 
             Init();
 
-            timer.Interval = TimeSpan.FromMilliseconds(500);
-            timer.Tick += Timer_Tick;
-            timer.Start();
+            Timer.Interval = TimeSpan.FromMilliseconds(500);
+            Timer.Tick += Timer_Tick;
+            Timer.Start();
+        }
+
+        protected override void OnStop()
+        {
+            if (laserPin != null)
+            {
+                laserPin.Write(GpioPinValue.Low);
+                laserPin.Dispose();
+            }
         }
 
         private void Init()
@@ -47,35 +56,26 @@ namespace Sensorkit.LessonClasses
             currentValue = GpioPinValue.Low;
         }
 
+        private void Run()
+        {
+            switch (currentValue)
+            {
+            case GpioPinValue.High:
+                laserPin.Write(GpioPinValue.Low);
+                currentValue = GpioPinValue.Low;
+                outputLED.Fill = new SolidColorBrush(Colors.Transparent);
+                break;
+            case GpioPinValue.Low:
+                laserPin.Write(GpioPinValue.High);
+                currentValue = GpioPinValue.High;
+                outputLED.Fill = new SolidColorBrush(Colors.Red);
+                break;
+            }
+        }
+
         private void Timer_Tick(object sender, object e)
         {
             Run();
-        }
-
-        private void Run()
-        {
-            switch(currentValue)
-            {
-                case GpioPinValue.High:
-                    laserPin.Write(GpioPinValue.Low);
-                    currentValue = GpioPinValue.Low;
-                    outputLED.Fill = new SolidColorBrush(Colors.Transparent);
-                    break;
-                case GpioPinValue.Low:
-                    laserPin.Write(GpioPinValue.High);
-                    currentValue = GpioPinValue.High;
-                    outputLED.Fill = new SolidColorBrush(Colors.Red);
-                    break;
-            }
-        }
-
-        protected override void OnStop()
-        {
-            if (laserPin != null)
-            {
-                laserPin.Write(GpioPinValue.Low);
-                laserPin.Dispose();
-            }
         }
     }
 }

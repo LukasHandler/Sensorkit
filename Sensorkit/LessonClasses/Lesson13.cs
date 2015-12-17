@@ -1,21 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.Devices.Gpio;
-using Windows.UI;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Shapes;
-
-namespace Sensorkit.LessonClasses
+﻿namespace Sensorkit.LessonClasses
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+
+    using Windows.Devices.Gpio;
+    using Windows.UI;
+    using Windows.UI.Xaml.Controls;
+    using Windows.UI.Xaml.Media;
+    using Windows.UI.Xaml.Shapes;
+
     public class Lesson13 : Lesson
     {
-        private GpioPin photoPin;
         private GpioPin ledPin;
         private Ellipse outputLED;
+        private GpioPin photoPin;
 
         public void Start(StackPanel output)
         {
@@ -28,9 +29,23 @@ namespace Sensorkit.LessonClasses
             outputLED.Stroke = new SolidColorBrush(Colors.Black);
             output.Children.Add(outputLED);
 
-            timer.Interval = TimeSpan.FromMilliseconds(100);
-            timer.Tick += Timer_Tick;
-            timer.Start();
+            Timer.Interval = TimeSpan.FromMilliseconds(100);
+            Timer.Tick += Timer_Tick;
+            Timer.Start();
+        }
+
+        protected override void OnStop()
+        {
+            if (photoPin != null)
+            {
+                photoPin.Dispose();
+            }
+
+            if (ledPin != null)
+            {
+                ledPin.Write(GpioPinValue.Low);
+                ledPin.Dispose();
+            }
         }
 
         private void Init()
@@ -47,11 +62,6 @@ namespace Sensorkit.LessonClasses
             ledPin.SetDriveMode(GpioPinDriveMode.Output);
         }
 
-        private void Timer_Tick(object sender, object e)
-        {
-            Run();
-        }
-
         private void Run()
         {
             if (photoPin.Read() == GpioPinValue.High)
@@ -66,18 +76,9 @@ namespace Sensorkit.LessonClasses
             }
         }
 
-        protected override void OnStop()
+        private void Timer_Tick(object sender, object e)
         {
-            if (photoPin != null)
-            {
-                photoPin.Dispose();
-            }
-
-            if (ledPin != null)
-            {
-                ledPin.Write(GpioPinValue.Low);
-                ledPin.Dispose();
-            }
+            Run();
         }
     }
 }

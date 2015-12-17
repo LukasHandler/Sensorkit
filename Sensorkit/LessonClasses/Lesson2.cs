@@ -1,26 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Windows.Devices.Gpio;
-using Windows.UI;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Shapes;
+﻿//----------------------------------------------------------------------------------------------
+// <copyright file="Lesson2.cs" company="Lukas Handler">
+// Copyright (c) Lukas Handler.  All rights reserved.
+// </copyright>
+//-------------------------------------------------------------------------------------------------
 
 namespace Sensorkit.LessonClasses
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading;
+    using System.Threading.Tasks;
+
+    using Windows.Devices.Gpio;
+    using Windows.UI;
+    using Windows.UI.Xaml;
+    using Windows.UI.Xaml.Controls;
+    using Windows.UI.Xaml.Media;
+    using Windows.UI.Xaml.Shapes;
+
     public class Lesson2 : Lesson
     {
-        enum LedStatus { Red, Green, Blue };
+        private GpioPin bluepin;
+        private GpioPin greenpin;
         private LedStatus ledStatus;
         private Ellipse outputLED;
         private GpioPin redpin;
-        private GpioPin greenpin;
-        private GpioPin bluepin;
+
+        enum LedStatus
+        {
+            Red, Green, Blue
+        }
 
         public void Start(StackPanel output)
         {
@@ -32,9 +43,65 @@ namespace Sensorkit.LessonClasses
 
             Init();
 
-            timer.Interval = TimeSpan.FromMilliseconds(500);
-            timer.Tick += Timer_Tick;
-            timer.Start();
+            Timer.Interval = TimeSpan.FromMilliseconds(500);
+            Timer.Tick += Timer_Tick;
+            Timer.Start();
+        }
+
+        protected override void OnStop()
+        {
+            if (redpin != null)
+            {
+                redpin.Write(GpioPinValue.Low);
+                redpin.Dispose();
+            }
+
+            if (bluepin != null)
+            {
+                bluepin.Write(GpioPinValue.Low);
+                bluepin.Dispose();
+            }
+
+            if (greenpin != null)
+            {
+                greenpin.Write(GpioPinValue.Low);
+                greenpin.Dispose();
+            }
+        }
+
+        private void FlipLED()
+        {
+            switch (ledStatus)
+            {
+            case LedStatus.Red:
+                // turn on red
+                redpin.Write(GpioPinValue.High);
+                bluepin.Write(GpioPinValue.Low);
+                greenpin.Write(GpioPinValue.Low);
+
+                outputLED.Fill = new SolidColorBrush(Colors.Red);
+                ledStatus = LedStatus.Green;    // go to next state
+                break;
+            case LedStatus.Green:
+
+                // turn on green
+                redpin.Write(GpioPinValue.Low);
+                greenpin.Write(GpioPinValue.High);
+                bluepin.Write(GpioPinValue.Low);
+
+                outputLED.Fill = new SolidColorBrush(Colors.Green);
+                ledStatus = LedStatus.Blue;     // go to next state
+                break;
+            case LedStatus.Blue:
+                // turn on blue
+                redpin.Write(GpioPinValue.Low);
+                greenpin.Write(GpioPinValue.Low);
+                bluepin.Write(GpioPinValue.High);
+
+                outputLED.Fill = new SolidColorBrush(Colors.Blue);
+                ledStatus = LedStatus.Red;      // go to next state
+                break;
+            }
         }
 
         private void Init()
@@ -58,62 +125,5 @@ namespace Sensorkit.LessonClasses
         {
             FlipLED();
         }
-
-        private void FlipLED()
-        {
-            switch (ledStatus)
-            {
-                case LedStatus.Red:
-                    //turn on red
-                    redpin.Write(GpioPinValue.High);
-                    bluepin.Write(GpioPinValue.Low);
-                    greenpin.Write(GpioPinValue.Low);
-
-                    outputLED.Fill = new SolidColorBrush(Colors.Red);
-                    ledStatus = LedStatus.Green;    // go to next state
-                    break;
-                case LedStatus.Green:
-
-                    //turn on green
-                    redpin.Write(GpioPinValue.Low);
-                    greenpin.Write(GpioPinValue.High);
-                    bluepin.Write(GpioPinValue.Low);
-
-                    outputLED.Fill = new SolidColorBrush(Colors.Green);
-                    ledStatus = LedStatus.Blue;     // go to next state
-                    break;
-                case LedStatus.Blue:
-                    //turn on blue
-                    redpin.Write(GpioPinValue.Low);
-                    greenpin.Write(GpioPinValue.Low);
-                    bluepin.Write(GpioPinValue.High);
-
-                    outputLED.Fill = new SolidColorBrush(Colors.Blue);
-                    ledStatus = LedStatus.Red;      // go to next state
-                    break;
-            }
-        }
-
-        protected override void OnStop()
-        {
-            if (redpin != null)
-            {
-                redpin.Write(GpioPinValue.Low);
-                redpin.Dispose();
-            }
-
-            if (bluepin != null)
-            {
-                bluepin.Write(GpioPinValue.Low);
-                bluepin.Dispose();
-            }
-
-            if (greenpin != null)
-            {
-                greenpin.Write(GpioPinValue.Low);
-                greenpin.Dispose();
-            }
-        }
     }
 }
-
