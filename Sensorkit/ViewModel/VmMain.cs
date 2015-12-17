@@ -88,7 +88,7 @@ namespace Sensorkit.ViewModel
                 LessonModel lesson = new LessonModel()
                 {
                     Id = i,
-                    RunAble = runAble,
+                    ExecuteAble = runAble,
                     Name = headLine,
                     Content = content,
                     Arguments = argsArray
@@ -138,7 +138,7 @@ namespace Sensorkit.ViewModel
         {
             string errorMessage = string.Empty;
 
-            if (!lesson.RunAble)
+            if (!lesson.ExecuteAble)
             {
                 errorMessage += resources.GetString("LessonRunAble") + Environment.NewLine;
                 return "Error" + Environment.NewLine + errorMessage;
