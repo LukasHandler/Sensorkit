@@ -13,7 +13,7 @@
             <RowDefinition Height="50"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Grid Background="LightBlue" Grid.Row="0">
+        <Grid Background="#1EA7CC" Grid.Row="0">
             <Button Style="{ThemeResource NavigationBackButtonNormalStyle}" Name="btn_back" Click="Btn_back_Click" Height="50"/>
         </Grid>
         <Grid Grid.Row="2">

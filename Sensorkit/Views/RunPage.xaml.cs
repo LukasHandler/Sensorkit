@@ -52,11 +52,11 @@ namespace Sensorkit
             this.viewModelRun = new VmRun();
             resources = ResourceLoader.GetForCurrentView("RunView");
 
+            this.InitializeComponent();
+
             txt_headLine.Text = resources.GetString("HeadLine");
             txt_input.Text = resources.GetString("Input");
             txt_output.Text = resources.GetString("Output");
-
-            this.InitializeComponent();
         }
 
         /// <summary>
