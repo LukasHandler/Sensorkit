@@ -103,10 +103,6 @@
     <Compile Include="LessonClasses\Lesson.cs" />
     <Compile Include="LessonClasses\Lesson1.cs" />
     <Compile Include="LessonClasses\Lesson11.cs" />
-    <Compile Include="LessonClasses\xLesson20.cs" />
-    <Compile Include="LessonClasses\xLesson19.cs" />
-    <Compile Include="LessonClasses\xLesson18.cs" />
-    <Compile Include="LessonClasses\xLesson17.cs" />
     <Compile Include="LessonClasses\Lesson16.cs" />
     <Compile Include="LessonClasses\Lesson15.cs" />
     <Compile Include="LessonClasses\Lesson14.cs" />

@@ -1,18 +1,17 @@
-﻿namespace Sensorkit.LessonClasses
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Windows.Devices.Gpio;
+using Windows.UI.Xaml.Controls;
+
+namespace Sensorkit.LessonClasses
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-
-    using Windows.Devices.Gpio;
-    using Windows.UI.Xaml.Controls;
-
     public class xLesson20 : Lesson
     {
-        private GpioPin adcClkPin;
         private GpioPin adcCsPin;
+        private GpioPin adcClkPin;
         private GpioPin adcDoPin;
         private TextBlock outputText;
 
@@ -28,29 +27,30 @@
             Timer.Start();
         }
 
-        protected override void OnStop()
+        private void Init()
         {
-            if (adcCsPin != null)
-            {
-                adcCsPin.Write(GpioPinValue.Low);
-                adcCsPin.Dispose();
-            }
+            const int RPI2_S_ADC_CS_PIN = 22;
+            const int RPI2_S_ADC_CLK_PIN = 18;
+            const int RPI2_S_ADC_DO_PIN = 27;
 
-            if (adcClkPin != null)
-            {
-                adcClkPin.Write(GpioPinValue.Low);
-                adcClkPin.Dispose();
-            }
+            var gpio = GpioController.GetDefault();
 
-            if (adcDoPin != null)
-            {
-                if (adcDoPin.GetDriveMode() == GpioPinDriveMode.Output)
-                {
-                    adcDoPin.Write(GpioPinValue.Low);
-                }
+            adcCsPin = gpio.OpenPin(RPI2_S_ADC_CS_PIN);
+            adcClkPin = gpio.OpenPin(RPI2_S_ADC_CLK_PIN);
+            adcDoPin = gpio.OpenPin(RPI2_S_ADC_DO_PIN);
 
-                adcDoPin.Dispose();
-            }
+            adcCsPin.SetDriveMode(GpioPinDriveMode.Output);
+            adcClkPin.SetDriveMode(GpioPinDriveMode.Output);
+            adcDoPin.SetDriveMode(GpioPinDriveMode.Output);
+        }
+
+        private void Timer_Tick(object sender, object e)
+        {
+            OnStop();
+            Init();
+            var analogValue = CheckResistor();
+            int ill = 210 - analogValue;
+            outputText.Text = "Current illumination: " + Convert.ToString(ill);
         }
 
         private int CheckResistor()
@@ -96,12 +96,12 @@
 
                 switch (adcDoPin.Read())
                 {
-                case GpioPinValue.Low:
-                    read = 0;
-                    break;
-                case GpioPinValue.High:
-                    read = 1;
-                    break;
+                    case GpioPinValue.Low:
+                        read = 0;
+                        break;
+                    case GpioPinValue.High:
+                        read = 1;
+                        break;
                 }
 
                 dat1 = dat1 << 1 | read;
@@ -113,12 +113,12 @@
 
                 switch (adcDoPin.Read())
                 {
-                case GpioPinValue.Low:
-                    read = 0;
-                    break;
-                case GpioPinValue.High:
-                    read = 1;
-                    break;
+                    case GpioPinValue.Low:
+                        read = 0;
+                        break;
+                    case GpioPinValue.High:
+                        read = 1;
+                        break;
                 }
 
                 dat2 = dat2 | read << i;
@@ -132,30 +132,29 @@
             return (dat1 == dat2) ? dat1 : 0;
         }
 
-        private void Init()
+        protected override void OnStop()
         {
-            const int RPI2_S_ADC_CS_PIN = 22;
-            const int RPI2_S_ADC_CLK_PIN = 18;
-            const int RPI2_S_ADC_DO_PIN = 27;
+            if (adcCsPin != null)
+            {
+                adcCsPin.Write(GpioPinValue.Low);
+                adcCsPin.Dispose();
+            }
 
-            var gpio = GpioController.GetDefault();
+            if (adcClkPin != null)
+            {
+                adcClkPin.Write(GpioPinValue.Low);
+                adcClkPin.Dispose();
+            }
 
-            adcCsPin = gpio.OpenPin(RPI2_S_ADC_CS_PIN);
-            adcClkPin = gpio.OpenPin(RPI2_S_ADC_CLK_PIN);
-            adcDoPin = gpio.OpenPin(RPI2_S_ADC_DO_PIN);
+            if (adcDoPin != null)
+            {
+                if (adcDoPin.GetDriveMode() == GpioPinDriveMode.Output)
+                {
+                    adcDoPin.Write(GpioPinValue.Low);
+                }
 
-            adcCsPin.SetDriveMode(GpioPinDriveMode.Output);
-            adcClkPin.SetDriveMode(GpioPinDriveMode.Output);
-            adcDoPin.SetDriveMode(GpioPinDriveMode.Output);
-        }
-
-        private void Timer_Tick(object sender, object e)
-        {
-            OnStop();
-            Init();
-            var analogValue = CheckResistor();
-            int ill = 210 - analogValue;
-            outputText.Text = "Current illumination: " + Convert.ToString(ill);
+                adcDoPin.Dispose();
+            }
         }
     }
 }
