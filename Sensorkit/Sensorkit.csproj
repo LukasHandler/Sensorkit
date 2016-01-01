@@ -134,11 +134,11 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
-    <PRIResource Include="Resources\de-DE\Lessons.resw">
+    <PRIResource Include="Resources\en-GB\Lessons.resw">
       <SubType>Designer</SubType>
     </PRIResource>
-    <PRIResource Include="Resources\de-DE\Messages.resw" />
-    <PRIResource Include="Resources\de-DE\RunView.resw" />
+    <PRIResource Include="Resources\en-GB\Messages.resw" />
+    <PRIResource Include="Resources\en-GB\RunView.resw" />
     <None Include="Sensorkit_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
@@ -220,9 +220,7 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Resources\en-GB\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <SDKReference Include="WindowsIoT, Version=10.0.10240.0">
       <Name>Windows IoT Extensions for the UWP</Name>
