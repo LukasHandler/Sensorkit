@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Sensorkit.MainPage" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="72" Y="1.75" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAAAAgAAAIgAAAAAQQAIAAAAAAAAAAAgABAAA=</HashCode>
+      <FileName>Views\MainPage.xaml.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="viewModelMain" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Sensorkit.RunPage" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="75.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAAIAACAAAAAAAAQAAIAQAEAAAIAAAAIAgAA=</HashCode>
+      <FileName>Views\RunPage.xaml.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="viewModelRun" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Sensorkit.LessonClasses.Lesson" Collapsed="true">
+    <Position X="75.25" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIEAAAAAEAAA=</HashCode>
+      <FileName>LessonClasses\Lesson.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sensorkit.LessonClasses.Lesson1" Collapsed="true">
+    <Position X="71" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAJBAABAACAAAgAAAIAAAEAoAAAQAAAEAEAAAAAAAUE=</HashCode>
+      <FileName>LessonClasses\Lesson1.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sensorkit.LessonClasses.Lesson16" Collapsed="true">
+    <Position X="76.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAABCAAAAAAAAAAQAAAAAAEACAAAAQAI=</HashCode>
+      <FileName>LessonClasses\Lesson16.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sensorkit.LessonClasses.Lesson2" Collapsed="true">
+    <Position X="73" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAACCAAAABAAAAAAAAQAAAAAAAAAkICAAAAQAA=</HashCode>
+      <FileName>LessonClasses\Lesson2.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sensorkit.Model.LessonModel" Collapsed="true">
+    <Position X="72" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAgAAAAAAAAAAAAQAAAAAAAAAIAAAAEAAAAA=</HashCode>
+      <FileName>Model\LessonModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sensorkit.ViewModel.VmMain" Collapsed="true">
+    <Position X="72" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAACAAAAAAAAAAAAAAAAABgAAQAEAAAAA=</HashCode>
+      <FileName>ViewModel\VmMain.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Lessons" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Sensorkit.ViewModel.VmRun" Collapsed="true">
+    <Position X="75.25" Y="3.25" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAgAAQAAAIAAAAAAAAAAAAAgACAIAA=</HashCode>
+      <FileName>ViewModel\VmRun.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="currentLesson" />
+    </ShowAsAssociation>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

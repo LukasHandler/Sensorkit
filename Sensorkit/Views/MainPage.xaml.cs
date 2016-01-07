@@ -42,7 +42,7 @@ namespace Sensorkit
         /// <summary>
         /// This is the ViewModel for the MainPage.
         /// </summary>
-        private VmMain modelViewMain;
+        private VmMain viewModelMain;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MainPage"/> class.
@@ -52,10 +52,10 @@ namespace Sensorkit
             // Sets the start index to lesson 0. This will be overwritten later in the "OnWindowLoaded" Method when navigated back from RunPage.
             this.index = 0;
 
-            this.modelViewMain = new VmMain();
-            this.modelViewMain.CreateLessons();
+            this.viewModelMain = new VmMain();
+            this.viewModelMain.CreateLessons();
 
-            this.DataContext = this.modelViewMain;
+            this.DataContext = this.viewModelMain;
 
             this.InitializeComponent();
         }
@@ -83,16 +83,16 @@ namespace Sensorkit
         /// <param name="e">Arguments of the event.</param>
         private async void Btn_play_Click(object sender, RoutedEventArgs e)
         {
-            string errorMessage = this.modelViewMain.ValidateSystem((LessonModel)lv_navigation.SelectedItem);
+            string errorMessage = this.viewModelMain.ValidateSystem((LessonModel)lv_navigation.SelectedItem);
 
             if (errorMessage == null)
             {
-                Tuple<LessonModel, bool> value = new Tuple<LessonModel, bool>(this.modelViewMain.Lessons[((LessonModel)lv_navigation.SelectedItem).Id], this.justRun);
+                Tuple<LessonModel, bool> value = new Tuple<LessonModel, bool>(this.viewModelMain.Lessons[((LessonModel)lv_navigation.SelectedItem).Id], this.justRun);
                 Frame.Navigate(typeof(RunPage), value);
             }
             else
             {
-                if (this.modelViewMain.IsRaspConnected())
+                if (this.viewModelMain.IsRaspConnected())
                 {
                     scrollViewer.ChangeView(0, 0, null);
                     TextBlock errorText = (TextBlock)grid_content.Children[0];
@@ -229,7 +229,7 @@ namespace Sensorkit
         {
             if (this.justRun)
             {
-                var selectedItem = this.modelViewMain.Lessons.FirstOrDefault(l => l.Id == this.lesson);
+                var selectedItem = this.viewModelMain.Lessons.FirstOrDefault(l => l.Id == this.lesson);
 
                 if (selectedItem != null)
                 {
@@ -241,7 +241,7 @@ namespace Sensorkit
             }
             else
             {
-                var selectedItem = this.modelViewMain.Lessons.FirstOrDefault(l => l.Id == this.index);
+                var selectedItem = this.viewModelMain.Lessons.FirstOrDefault(l => l.Id == this.index);
 
                 if (selectedItem != null)
                 {
